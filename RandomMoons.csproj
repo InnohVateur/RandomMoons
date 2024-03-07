@@ -34,6 +34,9 @@
     <Reference Include="LethalAPI.Terminal">
       <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\LethalAPI.Terminal.dll</HintPath>
     </Reference>
+    <Reference Include="LethalConfig">
+      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\LethalConfig\plugins\LethalConfig\LethalConfig.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Netcode.Runtime">
       <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Runtime.dll</HintPath>
     </Reference>

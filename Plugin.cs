@@ -10,11 +10,12 @@ namespace RandomMoons
 {
     [BepInPlugin(modGUID, modName, modVersion)]
     [BepInDependency("LethalAPI.Terminal")]
+    [BepInDependency("ainavt.lc.lethalconfig")]
     public class RandomMoons : BaseUnityPlugin
     {
         private const string modGUID = "InnohVateur.RandomMoons";
         private const string modName = "RandomMoons";
-        private const string modVersion = "1.0.0";
+        private const string modVersion = "1.1.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -22,11 +23,15 @@ namespace RandomMoons
 
         private TerminalModRegistry Commands;
 
-        internal ManualLogSource mls;
+        public static new Config CustomConfig { get; internal set; }
+
+        internal static ManualLogSource mls;
 
         private void Awake()
         {
-            if(Instance == null)
+            CustomConfig = new(base.Config);
+
+            if (Instance == null)
             {
                 Instance = this;
             }

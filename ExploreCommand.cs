@@ -4,6 +4,7 @@ using LethalAPI.LibTerminal.Interactions;
 using LethalAPI.LibTerminal.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RandomMoons
@@ -24,13 +25,14 @@ namespace RandomMoons
             if(States.closedUponConfirmation)
             {
                 States.closedUponConfirmation = false;
+                States.isInteracting = false;
                 terminal.currentNode = new TerminalNode() { name = s };
                 terminal.OnSubmit();
                 return null;
             }
             if (s.ToLower() == "c" || s.ToLower() == "confirm")
             {
-                if(States.hasGambled)
+                if(States.hasGambled && Config.restrictedCommandUsage.Value)
                 {
                     return "You have already explored. Please land before exploring once again !";
                 }
@@ -38,13 +40,14 @@ namespace RandomMoons
                 {
                     return "Please wait before travelling to a new moon !";
                 }
-                Random random = new Random();
-                int moonIndex = random.Next(0, terminal.moonsCatalogueList.Length);
-                StartOfRound.Instance.ChangeLevelServerRpc(terminal.moonsCatalogueList[moonIndex].levelID, terminal.groupCredits);
+                SelectableLevel moon = chooseRandomMoon(terminal.moonsCatalogueList);
+                if(Config.autoStart.Value) { States.startUponArriving = true; }
+                StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
+                States.lastVisitedMoon = moon.PlanetName;
                 States.isInteracting = false;
                 States.hasGambled = true;
 
-                return "A moon has been picked : " + terminal.moonsCatalogueList[moonIndex].PlanetName + ". Enjoy the trip !";
+                return "A moon has been picked : " + moon.PlanetName + " (" + moon.currentWeather.ToString() + "). Enjoy the trip !";
             }
             else if(s.ToLower() == "d" || s.ToLower() == "deny")
             {
@@ -59,5 +62,24 @@ namespace RandomMoons
                 return null;
             }
         }
+
+        private SelectableLevel chooseRandomMoon(SelectableLevel[] moons) { 
+            Random random = new Random();
+            int moonIndex = random.Next(0, moons.Length);
+            if(Config.moonSelectionType.Value == MoonSelection.VANILLA && !isMoonVanilla(moons[moonIndex]) || Config.moonSelectionType.Value == MoonSelection.MODDED && isMoonVanilla(moons[moonIndex])) {
+                return chooseRandomMoon(moons);
+            }
+            if(Config.checkIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
+            {
+                return chooseRandomMoon(moons);
+            }
+            if(States.visitedMoons.Count == moons.Length)
+            {
+                States.visitedMoons = [];
+            }
+            return moons[moonIndex];
+        }
+
+        private bool isMoonVanilla(SelectableLevel moon) { return States.vanillaMoons.Contains(moon.sceneName); }
     }
 }
