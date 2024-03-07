@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using RandomMoons.Utils;
+using UnityEngine;
 
 namespace RandomMoons.Patches
 {
@@ -29,7 +30,13 @@ namespace RandomMoons.Patches
             if(!StartOfRound.Instance.travellingToNewLevel && States.confirmedAutostart)
             {
                 States.confirmedAutostart = false;
-                StartOfRound.Instance.StartGameServerRpc();
+                GameObject startLever = GameObject.Find("StartGameLever");
+                if(startLever == null) { return; }
+                StartMatchLever startMatchLever = startLever.GetComponent<StartMatchLever>();
+                if(startMatchLever == null) { return; }
+                startMatchLever.PullLever();
+                startMatchLever.LeverAnimation();
+                startMatchLever.StartGame();
             }
         }
     }

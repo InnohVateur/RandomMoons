@@ -7,7 +7,7 @@ using System.Linq;
 namespace RandomMoons.Patches
 {
     [HarmonyPatch(typeof(Terminal))]
-    internal class TerminalPatch
+    public class TerminalPatch
     {
         [HarmonyPatch("QuitTerminal")]
         [HarmonyPrefix]
@@ -23,13 +23,13 @@ namespace RandomMoons.Patches
         [HarmonyPrefix]
         public static void registeringMoons(Terminal __instance)
         {
-            if(Config.moonSelectionType.Value == MoonSelection.MODDED)
+            if(SyncConfig.Instance.moonSelectionTypeSynced.Value == MoonSelection.MODDED)
             {
                 foreach(SelectableLevel lvl in __instance.moonsCatalogueList) {
                     if(!States.vanillaMoons.Contains(lvl.sceneName)) { return; }
                 }
 
-                Config.moonSelectionType.Value = MoonSelection.ALL;
+                SyncConfig.Instance.moonSelectionTypeSynced.Value = MoonSelection.ALL;
             }
         }
     }

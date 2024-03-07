@@ -12,6 +12,7 @@ namespace RandomMoons
     [BepInPlugin(modGUID, modName, modVersion)]
     [BepInDependency("LethalAPI.Terminal")]
     [BepInDependency("ainavt.lc.lethalconfig")]
+    [BepInDependency("io.github.CSync")]
     public class RandomMoons : BaseUnityPlugin
     {
         private const string modGUID = "InnohVateur.RandomMoons";
@@ -24,13 +25,13 @@ namespace RandomMoons
 
         private TerminalModRegistry Commands;
 
-        public static new Config CustomConfig { get; internal set; }
+        public static new SyncConfig CustomConfig;
 
         internal static ManualLogSource mls;
 
         private void Awake()
         {
-            CustomConfig = new(base.Config);
+            CustomConfig = new SyncConfig(base.Config);
 
             if (Instance == null)
             {
