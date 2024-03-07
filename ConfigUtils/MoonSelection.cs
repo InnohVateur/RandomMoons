@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RandomMoons
+﻿namespace RandomMoons.ConfigUtils
 {
     internal enum MoonSelection
     {

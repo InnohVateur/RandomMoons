@@ -3,8 +3,9 @@ using BepInEx.Logging;
 using HarmonyLib;
 using LethalAPI.LibTerminal;
 using LethalAPI.LibTerminal.Models;
+using RandomMoons.Commands;
 using RandomMoons.Patches;
-using UnityEngine;
+using RandomMoons.ConfigUtils;
 
 namespace RandomMoons
 {
@@ -15,7 +16,7 @@ namespace RandomMoons
     {
         private const string modGUID = "InnohVateur.RandomMoons";
         private const string modName = "RandomMoons";
-        private const string modVersion = "1.1.0";
+        private const string modVersion = "1.1.1";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 

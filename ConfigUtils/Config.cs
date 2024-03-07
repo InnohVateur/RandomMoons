@@ -1,11 +1,8 @@
 ﻿using BepInEx.Configuration;
 using LethalConfig;
 using LethalConfig.ConfigItems;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RandomMoons
+namespace RandomMoons.ConfigUtils
 {
     public class Config
     {

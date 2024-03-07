@@ -1,13 +1,12 @@
-﻿using BepInEx.Logging;
-using LethalAPI.LibTerminal.Attributes;
+﻿using LethalAPI.LibTerminal.Attributes;
 using LethalAPI.LibTerminal.Interactions;
 using LethalAPI.LibTerminal.Interfaces;
+using RandomMoons.ConfigUtils;
+using RandomMoons.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace RandomMoons
+namespace RandomMoons.Commands
 {
     internal class ExploreCommand
     {
@@ -22,7 +21,7 @@ namespace RandomMoons
 
         private string onInteraction(Terminal terminal, string s)
         {
-            if(States.closedUponConfirmation)
+            if (States.closedUponConfirmation)
             {
                 States.closedUponConfirmation = false;
                 States.isInteracting = false;
@@ -32,7 +31,7 @@ namespace RandomMoons
             }
             if (s.ToLower() == "c" || s.ToLower() == "confirm")
             {
-                if(States.hasGambled && Config.restrictedCommandUsage.Value)
+                if (States.hasGambled && Config.restrictedCommandUsage.Value)
                 {
                     return "You have already explored. Please land before exploring once again !";
                 }
@@ -41,7 +40,7 @@ namespace RandomMoons
                     return "Please wait before travelling to a new moon !";
                 }
                 SelectableLevel moon = chooseRandomMoon(terminal.moonsCatalogueList);
-                if(Config.autoStart.Value) { States.startUponArriving = true; }
+                if (Config.autoStart.Value) { States.startUponArriving = true; }
                 StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
                 States.lastVisitedMoon = moon.PlanetName;
                 States.isInteracting = false;
@@ -49,7 +48,7 @@ namespace RandomMoons
 
                 return "A moon has been picked : " + moon.PlanetName + " (" + moon.currentWeather.ToString() + "). Enjoy the trip !";
             }
-            else if(s.ToLower() == "d" || s.ToLower() == "deny")
+            else if (s.ToLower() == "d" || s.ToLower() == "deny")
             {
                 States.isInteracting = false;
                 return "Route cancelled.";
@@ -63,17 +62,19 @@ namespace RandomMoons
             }
         }
 
-        private SelectableLevel chooseRandomMoon(SelectableLevel[] moons) { 
+        private SelectableLevel chooseRandomMoon(SelectableLevel[] moons)
+        {
             Random random = new Random();
             int moonIndex = random.Next(0, moons.Length);
-            if(Config.moonSelectionType.Value == MoonSelection.VANILLA && !isMoonVanilla(moons[moonIndex]) || Config.moonSelectionType.Value == MoonSelection.MODDED && isMoonVanilla(moons[moonIndex])) {
-                return chooseRandomMoon(moons);
-            }
-            if(Config.checkIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
+            if (Config.moonSelectionType.Value == MoonSelection.VANILLA && !isMoonVanilla(moons[moonIndex]) || Config.moonSelectionType.Value == MoonSelection.MODDED && isMoonVanilla(moons[moonIndex]))
             {
                 return chooseRandomMoon(moons);
             }
-            if(States.visitedMoons.Count == moons.Length)
+            if (Config.checkIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
+            {
+                return chooseRandomMoon(moons);
+            }
+            if (States.visitedMoons.Count == moons.Length)
             {
                 States.visitedMoons = [];
             }
