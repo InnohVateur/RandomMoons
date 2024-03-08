@@ -18,7 +18,7 @@ namespace RandomMoons
     {
         internal const string modGUID = "InnohVateur.RandomMoons";
         internal const string modName = "RandomMoons";
-        internal const string modVersion = "1.1.1";
+        internal const string modVersion = "1.2.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
