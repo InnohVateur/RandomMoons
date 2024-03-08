@@ -31,16 +31,16 @@ namespace RandomMoons.Commands
             }
             if (s.ToLower() == "c" || s.ToLower() == "confirm")
             {
-                if (States.hasGambled && SyncConfig.Instance.restrictedCommandUsageSynced.Value)
+                if (States.hasGambled && SyncConfig.Instance.restrictedCommandUsage.Value)
                 {
                     return "You have already explored. Please land before exploring once again !";
                 }
-                if (StartOfRound.Instance.shipHasLanded || !StartOfRound.Instance.CanChangeLevels() || StartOfRound.Instance.shipIsLeaving)
+                if (StartOfRound.Instance.shipHasLanded || !StartOfRound.Instance.CanChangeLevels())
                 {
                     return "Please wait before travelling to a new moon !";
                 }
                 SelectableLevel moon = chooseRandomMoon(terminal.moonsCatalogueList);
-                if (SyncConfig.Instance.autoStartSynced.Value) { States.startUponArriving = true; }
+                if (SyncConfig.Instance.autoStart.Value) { States.startUponArriving = true; }
                 StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
                 States.lastVisitedMoon = moon.PlanetName;
                 States.isInteracting = false;
@@ -66,11 +66,11 @@ namespace RandomMoons.Commands
         {
             Random random = new Random();
             int moonIndex = random.Next(0, moons.Length);
-            if (SyncConfig.Instance.moonSelectionTypeSynced.Value == MoonSelection.VANILLA && !isMoonVanilla(moons[moonIndex]) || SyncConfig.Instance.moonSelectionTypeSynced.Value == MoonSelection.MODDED && isMoonVanilla(moons[moonIndex]))
+            if (SyncConfig.Instance.moonSelectionType.Value == MoonSelection.VANILLA && !isMoonVanilla(moons[moonIndex]) || SyncConfig.Instance.moonSelectionType.Value == MoonSelection.MODDED && isMoonVanilla(moons[moonIndex]))
             {
                 return chooseRandomMoon(moons);
             }
-            if (SyncConfig.Instance.checkIfVisitedDuringQuotaSynced.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
+            if (SyncConfig.Instance.checkIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
             {
                 return chooseRandomMoon(moons);
             }

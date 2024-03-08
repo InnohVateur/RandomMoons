@@ -1,70 +1,133 @@
-﻿using BepInEx.Configuration;
+﻿using BepInEx.Bootstrap;
+using BepInEx.Configuration;
 using CSync.Lib;
 using CSync.Util;
-using GameNetcodeStuff;
-using HarmonyLib;
 using LethalConfig;
 using LethalConfig.ConfigItems;
+using LethalSettings.UI;
+using LethalSettings.UI.Components;
 using System;
 using System.Runtime.Serialization;
-using Unity.Collections;
-using Unity.Netcode;
 
 namespace RandomMoons.ConfigUtils
 {
     [DataContract]
     public class SyncConfig : SyncedConfig<SyncConfig>
     {
-        [DataMember] internal SyncedEntry<bool> autoStartSynced { get; private set; }
-        [DataMember] internal SyncedEntry<bool> checkIfVisitedDuringQuotaSynced { get; private set; }
-        [DataMember] internal SyncedEntry<bool> restrictedCommandUsageSynced { get; private set; }
-        [DataMember] internal SyncedEntry<MoonSelection> moonSelectionTypeSynced { get; private set; }
+        [DataMember] internal SyncedEntry<bool> autoStart { get; private set; }
+        [DataMember] internal SyncedEntry<bool> autoExplore { get; private set; }
+        [DataMember] internal SyncedEntry<bool> checkIfVisitedDuringQuota { get; private set; }
+        [DataMember] internal SyncedEntry<bool> restrictedCommandUsage { get; private set; }
+        [DataMember] internal SyncedEntry<MoonSelection> moonSelectionType { get; private set; }
 
-        public SyncConfig(ConfigFile cfg) : base("RandomMoons")
+        public SyncConfig(ConfigFile cfg) : base(RandomMoons.modGUID)
         {
             ConfigManager.Register(this);
 
 
-            autoStartSynced = cfg.BindSyncedEntry(
+            autoStart = cfg.BindSyncedEntry(
                     "General",
                     "AutoStart",
                     false,
                     "Automatically starts the level upon travelling to a random moon"
                 );
 
-            checkIfVisitedDuringQuotaSynced = cfg.BindSyncedEntry(
+            autoExplore = cfg.BindSyncedEntry(
+                    "General",
+                    "AutoExplore",
+                    false,
+                    "Automatically explore to a random moon upon leaving the level"
+                );
+
+            checkIfVisitedDuringQuota = cfg.BindSyncedEntry(
                     "General",
                     "RegisterTravels",
                     false,
                     "The same moon can't be chosen twice while the quota hasn't changed"
                 );
 
-            restrictedCommandUsageSynced = cfg.BindSyncedEntry(
+            restrictedCommandUsage = cfg.BindSyncedEntry(
                     "General",
                     "PreventMultipleTravels",
                     true,
                     "Prevents the players to execute explore multiple times without landing"
                 );
 
-            moonSelectionTypeSynced = cfg.BindSyncedEntry(
+            moonSelectionType = cfg.BindSyncedEntry(
                     "General",
                     "MoonSelection",
                     MoonSelection.ALL,
                     "Can have three values : vanilla, modded or all, to change the moons that can be chosen. (Note : modded input without modded moons would do the same as all)"
                 );
 
-            BoolCheckBoxConfigItem autoStartBox = new BoolCheckBoxConfigItem(autoStartSynced.Entry, false);
-            BoolCheckBoxConfigItem checkIfVisitedDuringQuotaBox = new BoolCheckBoxConfigItem(checkIfVisitedDuringQuotaSynced.Entry, false);
-            BoolCheckBoxConfigItem restrictedCommandUsageBox = new BoolCheckBoxConfigItem(restrictedCommandUsageSynced.Entry, false);
-            EnumDropDownConfigItem<MoonSelection> moonSelectionTypeDropdown = new EnumDropDownConfigItem<MoonSelection>(moonSelectionTypeSynced.Entry, false);
+            if (Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig"))
+            {
+                BoolCheckBoxConfigItem autoStartBox = new BoolCheckBoxConfigItem(autoStart.Entry, false);
+                BoolCheckBoxConfigItem autoExploreBox = new BoolCheckBoxConfigItem(autoExplore.Entry, false);
+                BoolCheckBoxConfigItem checkIfVisitedDuringQuotaBox = new BoolCheckBoxConfigItem(checkIfVisitedDuringQuota.Entry, false);
+                BoolCheckBoxConfigItem restrictedCommandUsageBox = new BoolCheckBoxConfigItem(restrictedCommandUsage.Entry, false);
+                EnumDropDownConfigItem<MoonSelection> moonSelectionTypeDropdown = new EnumDropDownConfigItem<MoonSelection>(moonSelectionType.Entry, false);
 
-            LethalConfigManager.SetModDescription("Allows you to travel to a randomly selected moon, for free !");
-            LethalConfigManager.SkipAutoGen();
+                LethalConfigManager.SetModDescription("Allows you to travel to a randomly selected moon, for free !");
+                LethalConfigManager.SkipAutoGen();
 
-            LethalConfigManager.AddConfigItem(autoStartBox);
-            LethalConfigManager.AddConfigItem(checkIfVisitedDuringQuotaBox);
-            LethalConfigManager.AddConfigItem(restrictedCommandUsageBox);
-            LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
+                LethalConfigManager.AddConfigItem(autoStartBox);
+                LethalConfigManager.AddConfigItem(autoExploreBox);
+                LethalConfigManager.AddConfigItem(checkIfVisitedDuringQuotaBox);
+                LethalConfigManager.AddConfigItem(restrictedCommandUsageBox);
+                LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
+            }
+
+            if(Chainloader.PluginInfos.ContainsKey("com.willis.lc.lethalsettings"))
+            {
+                ModMenu.RegisterMod(new ModMenu.ModSettingsConfig
+                {
+                    Name = RandomMoons.modName,
+                    Id = RandomMoons.modGUID,
+                    Version = RandomMoons.modVersion,
+                    Description = "Allows you to travel to a randomly selected moon, for free !",
+                    MenuComponents =
+                    [
+                        new ToggleComponent
+                        {
+                            Text = "AutoStart",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.autoStart.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.autoStart.Value = value
+                        },
+
+                        new ToggleComponent {
+                            Text = "AutoExplore",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.autoExplore.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.autoExplore.Value = value
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "RegisterTravels",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.checkIfVisitedDuringQuota.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.checkIfVisitedDuringQuota.Value = value
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "PreventMultipleTravels",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.restrictedCommandUsage.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.restrictedCommandUsage.Value = value
+                        },
+
+                        new DropdownComponent
+                        {
+                            Options = [
+                                new TMPro.TMP_Dropdown.OptionData("ALL"),
+                                new TMPro.TMP_Dropdown.OptionData("MODDED"),
+                                new TMPro.TMP_Dropdown.OptionData("VANILLA")
+                            ],
+                            OnInitialize = (self) => self.Value.text = SyncConfig.Default.moonSelectionType.Value.ToString(),
+                            OnValueChanged = (self, value) => SyncConfig.Default.moonSelectionType.Value = (MoonSelection)Enum.Parse(typeof(MoonSelection), value.text)
+                        }
+                    ]
+                });
+            }
         }
     }
 }

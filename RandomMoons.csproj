@@ -31,14 +31,17 @@
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="CSync">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\CSync.dll</HintPath>
+    <Reference Include="com.sigurd.csync">
+      <HintPath>externalDeps\com.sigurd.csync.dll</HintPath>
     </Reference>
     <Reference Include="LethalAPI.Terminal">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\LethalAPI.Terminal.dll</HintPath>
+      <HintPath>externalDeps\LethalAPI.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="LethalConfig">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\LethalConfig\LethalConfig.dll</HintPath>
+      <HintPath>externalDeps\LethalConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="LethalSettings">
+      <HintPath>externalDeps\LethalSettings.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections">
       <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Collections.dll</HintPath>

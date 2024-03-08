@@ -10,7 +10,7 @@ namespace RandomMoons.Utils
         public static bool startUponArriving = false;
         public static bool confirmedAutostart = false;
         public static List<string> visitedMoons = new List<string>();
-        public static string[] vanillaMoons = { "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan" };
+        public static readonly string[] vanillaMoons = { "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan" };
         public static string lastVisitedMoon;
     }
 }

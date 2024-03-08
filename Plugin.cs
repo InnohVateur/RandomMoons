@@ -11,13 +11,12 @@ namespace RandomMoons
 {
     [BepInPlugin(modGUID, modName, modVersion)]
     [BepInDependency("LethalAPI.Terminal")]
-    [BepInDependency("ainavt.lc.lethalconfig")]
-    [BepInDependency("io.github.CSync")]
+    [BepInDependency("com.sigurd.csync")]
     public class RandomMoons : BaseUnityPlugin
     {
-        private const string modGUID = "InnohVateur.RandomMoons";
-        private const string modName = "RandomMoons";
-        private const string modVersion = "1.1.1";
+        internal const string modGUID = "InnohVateur.RandomMoons";
+        internal const string modName = "RandomMoons";
+        internal const string modVersion = "1.1.1";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
