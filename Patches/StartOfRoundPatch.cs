@@ -59,7 +59,7 @@ namespace RandomMoons.Patches
         [HarmonyPostfix]
         public static void execAutoExplore()
         {
-            if(SyncConfig.Instance.autoExplore)
+            if(SyncConfig.Instance.autoExplore && TimeOfDay.Instance.daysUntilDeadline > 0)
             {
                 States.exploreASAP = true;
             }
