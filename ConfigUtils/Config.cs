@@ -7,6 +7,7 @@ using LethalConfig.ConfigItems;
 using LethalSettings.UI;
 using LethalSettings.UI.Components;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace RandomMoons.ConfigUtils
@@ -62,31 +63,43 @@ namespace RandomMoons.ConfigUtils
 
             if (Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig"))
             {
-                BoolCheckBoxConfigItem autoStartBox = new BoolCheckBoxConfigItem(autoStart.Entry, false);
-                BoolCheckBoxConfigItem autoExploreBox = new BoolCheckBoxConfigItem(autoExplore.Entry, false);
-                BoolCheckBoxConfigItem checkIfVisitedDuringQuotaBox = new BoolCheckBoxConfigItem(checkIfVisitedDuringQuota.Entry, false);
-                BoolCheckBoxConfigItem restrictedCommandUsageBox = new BoolCheckBoxConfigItem(restrictedCommandUsage.Entry, false);
-                EnumDropDownConfigItem<MoonSelection> moonSelectionTypeDropdown = new EnumDropDownConfigItem<MoonSelection>(moonSelectionType.Entry, false);
-
-                LethalConfigManager.SetModDescription("Allows you to travel to a randomly selected moon, for free !");
-                LethalConfigManager.SkipAutoGen();
-
-                LethalConfigManager.AddConfigItem(autoStartBox);
-                LethalConfigManager.AddConfigItem(autoExploreBox);
-                LethalConfigManager.AddConfigItem(checkIfVisitedDuringQuotaBox);
-                LethalConfigManager.AddConfigItem(restrictedCommandUsageBox);
-                LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
+                InitLethalConfig();
             }
 
             if(Chainloader.PluginInfos.ContainsKey("com.willis.lc.lethalsettings"))
             {
-                ModMenu.RegisterMod(new ModMenu.ModSettingsConfig
-                {
-                    Name = RandomMoons.modName,
-                    Id = RandomMoons.modGUID,
-                    Version = RandomMoons.modVersion,
-                    Description = "Allows you to travel to a randomly selected moon, for free !",
-                    MenuComponents =
+                InitLethalSettings();
+            }
+        }
+
+        private void InitLethalConfig()
+        {
+            BoolCheckBoxConfigItem autoStartBox = new BoolCheckBoxConfigItem(autoStart.Entry, false);
+            BoolCheckBoxConfigItem autoExploreBox = new BoolCheckBoxConfigItem(autoExplore.Entry, false);
+            BoolCheckBoxConfigItem checkIfVisitedDuringQuotaBox = new BoolCheckBoxConfigItem(checkIfVisitedDuringQuota.Entry, false);
+            BoolCheckBoxConfigItem restrictedCommandUsageBox = new BoolCheckBoxConfigItem(restrictedCommandUsage.Entry, false);
+            EnumDropDownConfigItem<MoonSelection> moonSelectionTypeDropdown = new EnumDropDownConfigItem<MoonSelection>(moonSelectionType.Entry, false);
+
+            LethalConfigManager.SetModDescription("Allows you to travel to a randomly selected moon, for free !");
+            LethalConfigManager.SkipAutoGen();
+
+            LethalConfigManager.AddConfigItem(autoStartBox);
+            LethalConfigManager.AddConfigItem(autoExploreBox);
+            LethalConfigManager.AddConfigItem(checkIfVisitedDuringQuotaBox);
+            LethalConfigManager.AddConfigItem(restrictedCommandUsageBox);
+            LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+        private void InitLethalSettings()
+        {
+            ModMenu.RegisterMod(new ModMenu.ModSettingsConfig
+            {
+                Name = RandomMoons.modName,
+                Id = RandomMoons.modGUID,
+                Version = RandomMoons.modVersion,
+                Description = "Allows you to travel to a randomly selected moon, for free !",
+                MenuComponents =
                     [
                         new ToggleComponent
                         {
@@ -126,8 +139,7 @@ namespace RandomMoons.ConfigUtils
                             OnValueChanged = (self, value) => SyncConfig.Default.moonSelectionType.Value = (MoonSelection)Enum.Parse(typeof(MoonSelection), value.text)
                         }
                     ]
-                });
-            }
+            });
         }
     }
 }

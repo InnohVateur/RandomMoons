@@ -62,7 +62,7 @@ namespace RandomMoons.Commands
             }
         }
 
-        private SelectableLevel chooseRandomMoon(SelectableLevel[] moons)
+        public static SelectableLevel chooseRandomMoon(SelectableLevel[] moons)
         {
             Random random = new Random();
             int moonIndex = random.Next(0, moons.Length);
@@ -81,6 +81,6 @@ namespace RandomMoons.Commands
             return moons[moonIndex];
         }
 
-        private bool isMoonVanilla(SelectableLevel moon) { return States.vanillaMoons.Contains(moon.sceneName); }
+        public static bool isMoonVanilla(SelectableLevel moon) { return States.vanillaMoons.Contains(moon.sceneName); }
     }
 }

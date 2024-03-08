@@ -12,6 +12,8 @@ namespace RandomMoons
     [BepInPlugin(modGUID, modName, modVersion)]
     [BepInDependency("LethalAPI.Terminal")]
     [BepInDependency("com.sigurd.csync")]
+    [BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.willis.lc.lethalsettings", BepInDependency.DependencyFlags.SoftDependency)]
     public class RandomMoons : BaseUnityPlugin
     {
         internal const string modGUID = "InnohVateur.RandomMoons";

@@ -9,8 +9,10 @@ namespace RandomMoons.Utils
         public static bool hasGambled = false;
         public static bool startUponArriving = false;
         public static bool confirmedAutostart = false;
+        public static bool exploreASAP = false;
         public static List<string> visitedMoons = new List<string>();
         public static readonly string[] vanillaMoons = { "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan" };
+        public static readonly int companyBuildingLevelID = 3;
         public static string lastVisitedMoon;
     }
 }

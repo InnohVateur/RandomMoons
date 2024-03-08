@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using RandomMoons.Commands;
+using RandomMoons.ConfigUtils;
 using RandomMoons.Utils;
 using UnityEngine;
 
@@ -11,7 +13,7 @@ namespace RandomMoons.Patches
         [HarmonyPrefix]
         public static void updateStates()
         {
-            if(StartOfRound.Instance.shipHasLanded && States.hasGambled)
+            if (StartOfRound.Instance.shipHasLanded && States.hasGambled)
             {
                 States.hasGambled = false;
                 States.visitedMoons.Add(States.lastVisitedMoon);
@@ -37,6 +39,29 @@ namespace RandomMoons.Patches
                 startMatchLever.PullLever();
                 startMatchLever.LeverAnimation();
                 startMatchLever.StartGame();
+            }
+            if(StartOfRound.Instance.CanChangeLevels() && States.exploreASAP)
+            {
+                States.exploreASAP = false;
+                Terminal terminal = Object.FindObjectOfType<Terminal>();
+                if (SyncConfig.Instance.autoStart.Value) { States.startUponArriving = true; }
+                if (TimeOfDay.Instance.daysUntilDeadline > 0)
+                {
+                    SelectableLevel moon = ExploreCommand.chooseRandomMoon(terminal.moonsCatalogueList);
+                    StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
+                    States.lastVisitedMoon = moon.PlanetName;
+                    States.hasGambled = true;
+                }else { StartOfRound.Instance.ChangeLevelServerRpc(States.companyBuildingLevelID, terminal.groupCredits); }
+            }
+        }
+
+        [HarmonyPatch("ShipLeave")]
+        [HarmonyPostfix]
+        public static void execAutoExplore()
+        {
+            if(SyncConfig.Instance.autoExplore)
+            {
+                States.exploreASAP = true;
             }
         }
     }
