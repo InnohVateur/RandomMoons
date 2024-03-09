@@ -15,7 +15,7 @@ namespace RandomMoons.Patches
         // Checks if a player leaved upon confirming explore command
         [HarmonyPatch("QuitTerminal")]
         [HarmonyPrefix]
-        public static void clearTerminalInteraction(Terminal __instance)
+        public static void QuitTerminalPatch(Terminal __instance)
         {
             if(States.isInteracting)
             {
@@ -26,7 +26,7 @@ namespace RandomMoons.Patches
         // Checks if the moon selection config entry can be set to MODDED
         [HarmonyPatch("BeginUsingTerminal")]
         [HarmonyPrefix]
-        public static void registeringMoons(Terminal __instance)
+        public static void BeginUsingTerminalPatch(Terminal __instance)
         {
             if(SyncConfig.Instance.moonSelectionType.Value == MoonSelection.MODDED)
             {

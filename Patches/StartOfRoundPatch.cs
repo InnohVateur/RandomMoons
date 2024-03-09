@@ -17,7 +17,7 @@ namespace RandomMoons.Patches
         // Uses basically all the states
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
-        public static void updateStates()
+        public static void UpdatePatch()
         {
             // Add moon to visitedMoons
             if (StartOfRound.Instance.shipHasLanded && States.hasGambled)
@@ -69,7 +69,7 @@ namespace RandomMoons.Patches
         // When the ship leaves, checks for autoExplore
         [HarmonyPatch("ShipLeave")]
         [HarmonyPostfix]
-        public static void execAutoExplore()
+        public static void ShipLeavePatch()
         {
             if(SyncConfig.Instance.autoExplore && (TimeOfDay.Instance.daysUntilDeadline > 0 || TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota)) // Checks for AutoExplore and if the game is lost
             {
