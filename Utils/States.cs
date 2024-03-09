@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace RandomMoons.Utils
 {
@@ -17,5 +18,7 @@ namespace RandomMoons.Utils
         public static readonly string[] vanillaMoons = { "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan" }; // All vanilla moons scene names
         public static readonly int companyBuildingLevelID = 3; // Gordion (Company Building) level ID
         public static string lastVisitedMoon; // Last visited moon using explore command / ship autoExplore
+        public static ulong clientID;
+        public static Light defaultNightVision;
     }
 }

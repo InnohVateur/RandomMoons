@@ -41,6 +41,8 @@ namespace RandomMoons
 
             mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
 
+            mls.LogWarning("Please notice that you're using the developer version of this mod !");
+
             mls.LogInfo("Loading patches...");
             ApplyPluginPatches();
             mls.LogInfo("Patches loaded !");
@@ -62,6 +64,12 @@ namespace RandomMoons
 
             harmony.PatchAll(typeof(StartOfRoundPatch));
             mls.LogInfo("Patched StartOfRound");
+
+            harmony.PatchAll(typeof(PlayerControllerBPatch));
+            mls.LogInfo("Patched PlayerControllerB");
+
+            harmony.PatchAll(typeof(EnemyAIPatch));
+            mls.LogInfo("Patched EnemyAI");
         }
     }
 }

@@ -19,11 +19,23 @@ namespace RandomMoons.Patches
         [HarmonyPrefix]
         public static void updateStates()
         {
+            // Checks for infinite credits
+            if(SyncConfig.Default.hasInfiniteCredits.Value)
+            {
+                terminal.groupCredits = int.MaxValue;
+            }
+
             // Add moon to visitedMoons
             if (StartOfRound.Instance.shipHasLanded && States.hasGambled)
             {
                 States.hasGambled = false;
                 States.visitedMoons.Add(States.lastVisitedMoon);
+            }
+
+            // Check for auto reach quota
+            if (StartOfRound.Instance.shipHasLanded && StartOfRound.Instance.currentLevelID == States.companyBuildingLevelID && SyncConfig.Default.autoReachQuota.Value)
+            {
+                TimeOfDay.Instance.quotaFulfilled = TimeOfDay.Instance.profitQuota;
             }
 
             // Reset visitedMoons when game over
@@ -62,7 +74,9 @@ namespace RandomMoons.Patches
                     StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
                     States.lastVisitedMoon = moon.PlanetName;
                     States.hasGambled = true;
-                }else { StartOfRound.Instance.ChangeLevelServerRpc(States.companyBuildingLevelID, terminal.groupCredits); }
+                }else { 
+                    StartOfRound.Instance.ChangeLevelServerRpc(States.companyBuildingLevelID, terminal.groupCredits);
+                }
             }
         }
 
