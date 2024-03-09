@@ -12,20 +12,27 @@ using System.Runtime.Serialization;
 
 namespace RandomMoons.ConfigUtils
 {
+    /// <summary>
+    /// Config for the mod. Use Csync to sync client's configs with host's one
+    /// </summary>
     [DataContract]
     public class SyncConfig : SyncedConfig<SyncConfig>
     {
+
+        // Config entries (using CSync prebuilt entry class)
         [DataMember] internal SyncedEntry<bool> autoStart { get; private set; }
         [DataMember] internal SyncedEntry<bool> autoExplore { get; private set; }
         [DataMember] internal SyncedEntry<bool> checkIfVisitedDuringQuota { get; private set; }
         [DataMember] internal SyncedEntry<bool> restrictedCommandUsage { get; private set; }
         [DataMember] internal SyncedEntry<MoonSelection> moonSelectionType { get; private set; }
 
+        // Constructor (binds the entries and build mod config page for LethalConfig and LethalSettings)
         public SyncConfig(ConfigFile cfg) : base(RandomMoons.modGUID)
         {
+            // Register this config for CSync to bless it with their magic man's magic words
             ConfigManager.Register(this);
 
-
+            // Entry binding
             autoStart = cfg.BindSyncedEntry(
                     "General",
                     "AutoStart",
@@ -61,6 +68,7 @@ namespace RandomMoons.ConfigUtils
                     "Can have three values : vanilla, modded or all, to change the moons that can be chosen. (Note : modded input without modded moons would do the same as all)"
                 );
 
+            // LethalConfig and LethalSettings initialization
             if (Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig"))
             {
                 InitLethalConfig();
@@ -72,6 +80,8 @@ namespace RandomMoons.ConfigUtils
             }
         }
 
+        // Inits LethalConfig's mod page
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         private void InitLethalConfig()
         {
             BoolCheckBoxConfigItem autoStartBox = new BoolCheckBoxConfigItem(autoStart.Entry, false);
@@ -90,6 +100,7 @@ namespace RandomMoons.ConfigUtils
             LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
         }
 
+        // Inits LethalSettings' mod page
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         private void InitLethalSettings()
         {

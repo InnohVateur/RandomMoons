@@ -6,9 +6,13 @@ using System.Linq;
 
 namespace RandomMoons.Patches
 {
+    /// <summary>
+    /// Patches terminal. Learn to read
+    /// </summary>
     [HarmonyPatch(typeof(Terminal))]
     public class TerminalPatch
     {
+        // Checks if a player leaved upon confirming explore command
         [HarmonyPatch("QuitTerminal")]
         [HarmonyPrefix]
         public static void clearTerminalInteraction(Terminal __instance)
@@ -19,6 +23,7 @@ namespace RandomMoons.Patches
             }
         }
 
+        // Checks if the moon selection config entry can be set to MODDED
         [HarmonyPatch("BeginUsingTerminal")]
         [HarmonyPrefix]
         public static void registeringMoons(Terminal __instance)
