@@ -26,6 +26,13 @@ namespace RandomMoons.ConfigUtils
         [DataMember] internal SyncedEntry<bool> restrictedCommandUsage { get; private set; }
         [DataMember] internal SyncedEntry<MoonSelection> moonSelectionType { get; private set; }
 
+        // Debug entries
+        [DataMember] internal SyncedEntry<bool> autoReachQuota { get; private set; }
+        [DataMember] internal SyncedEntry<bool> hasInfiniteCredits { get; private set; }
+        [DataMember] internal SyncedEntry<bool> hasNightVision { get; private set; }
+        [DataMember] internal SyncedEntry<bool> isPlayerInvincible { get; private set; }
+        [DataMember] internal SyncedEntry<bool> doEnemiesAgroPlayer { get; private set; }
+
         // Constructor (binds the entries and build mod config page for LethalConfig and LethalSettings)
         public SyncConfig(ConfigFile cfg) : base(RandomMoons.modGUID)
         {
@@ -68,6 +75,43 @@ namespace RandomMoons.ConfigUtils
                     "Can have three values : vanilla, modded or all, to change the moons that can be chosen. (Note : modded input without modded moons would do the same as all)"
                 );
 
+
+            // Debug entry binding
+            autoReachQuota = cfg.BindSyncedEntry(
+                    "General.Debug",
+                    "AutoReachQuota",
+                    false,
+                    "Automatically reaches the quota upon landing on Gordion (The Company Building)"
+                );
+
+            hasInfiniteCredits = cfg.BindSyncedEntry(
+                    "General.Debug",
+                    "InfiniteCredits",
+                    false,
+                    "Constantly sets the credits amount to integer limit (2,147,483,647)"
+                );
+
+            hasNightVision = cfg.BindSyncedEntry(
+                    "General.Debug",
+                    "NightVision",
+                    false,
+                    "Grants night vision"
+                );
+
+            isPlayerInvincible = cfg.BindSyncedEntry(
+                    "General.Debug",
+                    "Invincibility",
+                    false,
+                    "Makes the player immune to damages"
+                );
+
+            doEnemiesAgroPlayer = cfg.BindSyncedEntry(
+                    "General.Debug",
+                    "Invisibility",
+                    false,
+                    "Makes enemies not target the player"
+                );
+
             // LethalConfig and LethalSettings initialization
             if (Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig"))
             {
@@ -90,6 +134,12 @@ namespace RandomMoons.ConfigUtils
             BoolCheckBoxConfigItem restrictedCommandUsageBox = new BoolCheckBoxConfigItem(restrictedCommandUsage.Entry, false);
             EnumDropDownConfigItem<MoonSelection> moonSelectionTypeDropdown = new EnumDropDownConfigItem<MoonSelection>(moonSelectionType.Entry, false);
 
+            BoolCheckBoxConfigItem autoReachQuotaBox = new BoolCheckBoxConfigItem(autoReachQuota.Entry, false);
+            BoolCheckBoxConfigItem hasInfiniteCreditsBox = new BoolCheckBoxConfigItem(hasInfiniteCredits.Entry, false);
+            BoolCheckBoxConfigItem hasNightVisionBox = new BoolCheckBoxConfigItem(hasNightVision.Entry, false);
+            BoolCheckBoxConfigItem isPlayerInvincibleBox = new BoolCheckBoxConfigItem(isPlayerInvincible.Entry, false);
+            BoolCheckBoxConfigItem doEnemiesAgroPlayerBox = new BoolCheckBoxConfigItem(doEnemiesAgroPlayer.Entry, false);
+
             LethalConfigManager.SetModDescription("Allows you to travel to a randomly selected moon, for free !");
             LethalConfigManager.SkipAutoGen();
 
@@ -98,6 +148,12 @@ namespace RandomMoons.ConfigUtils
             LethalConfigManager.AddConfigItem(checkIfVisitedDuringQuotaBox);
             LethalConfigManager.AddConfigItem(restrictedCommandUsageBox);
             LethalConfigManager.AddConfigItem(moonSelectionTypeDropdown);
+
+            LethalConfigManager.AddConfigItem(autoReachQuotaBox);
+            LethalConfigManager.AddConfigItem(hasInfiniteCreditsBox);
+            LethalConfigManager.AddConfigItem(hasNightVisionBox);
+            LethalConfigManager.AddConfigItem(isPlayerInvincibleBox);
+            LethalConfigManager.AddConfigItem(doEnemiesAgroPlayerBox);
         }
 
         // Inits LethalSettings' mod page
@@ -148,6 +204,41 @@ namespace RandomMoons.ConfigUtils
                             ],
                             OnInitialize = (self) => self.Value.text = SyncConfig.Default.moonSelectionType.Value.ToString(),
                             OnValueChanged = (self, value) => SyncConfig.Default.moonSelectionType.Value = (MoonSelection)Enum.Parse(typeof(MoonSelection), value.text)
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "AutoReachQuota",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.autoReachQuota.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.autoReachQuota.Value = value
+                        },
+
+                        new ToggleComponent 
+                        {
+                            Text = "InfiniteCredits",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.hasInfiniteCredits.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.hasInfiniteCredits.Value = value
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "NightVision",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.hasNightVision.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.hasNightVision.Value = value
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "Invincibility",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.isPlayerInvincible.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.isPlayerInvincible.Value = value
+                        },
+
+                        new ToggleComponent
+                        {
+                            Text = "Invisibility",
+                            OnInitialize = (self) => self.Value = SyncConfig.Default.doEnemiesAgroPlayer.Value,
+                            OnValueChanged = (self, value) => SyncConfig.Default.doEnemiesAgroPlayer.Value = value
                         }
                     ]
             });
