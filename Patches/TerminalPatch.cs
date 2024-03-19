@@ -28,13 +28,13 @@ namespace RandomMoons.Patches
         [HarmonyPrefix]
         public static void BeginUsingTerminalPatch(Terminal __instance)
         {
-            if(SyncConfig.Instance.moonSelectionType.Value == MoonSelection.MODDED)
+            if(SyncConfig.Instance.MoonSelectionType.Value == MoonSelection.MODDED)
             {
                 foreach(SelectableLevel lvl in __instance.moonsCatalogueList) {
                     if(!States.vanillaMoons.Contains(lvl.sceneName)) { return; }
                 }
 
-                SyncConfig.Instance.moonSelectionType.Value = MoonSelection.ALL;
+                SyncConfig.Instance.MoonSelectionType.Value = MoonSelection.ALL;
             }
         }
     }

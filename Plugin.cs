@@ -6,6 +6,7 @@ using LethalAPI.LibTerminal.Models;
 using RandomMoons.Commands;
 using RandomMoons.Patches;
 using RandomMoons.ConfigUtils;
+using System.Runtime.Serialization;
 
 namespace RandomMoons
 {
@@ -22,7 +23,7 @@ namespace RandomMoons
         // Basic mod infos
         internal const string modGUID = "InnohVateur.RandomMoons";
         internal const string modName = "RandomMoons";
-        internal const string modVersion = "1.2.2";
+        internal const string modVersion = "1.2.3";
 
         // Harmony instance
         private readonly Harmony harmony = new Harmony(modGUID);
@@ -34,7 +35,7 @@ namespace RandomMoons
         private TerminalModRegistry Commands;
 
         // Config Instance
-        public static new SyncConfig CustomConfig;
+        public static SyncConfig CustomConfig;
 
         // Log Source Instance
         internal static ManualLogSource mls;
@@ -42,6 +43,7 @@ namespace RandomMoons
         //Executed at start
         private void Awake()
         {
+            
             // Instantiates the config
             CustomConfig = new SyncConfig(base.Config);
 
