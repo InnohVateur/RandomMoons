@@ -1,4 +1,6 @@
-﻿using BepInEx.Logging;
+using BepInEx.Logging;
+using CSync;
+using CSync.Lib;
 using LethalAPI.LibTerminal.Attributes;
 using LethalAPI.LibTerminal.Interactions;
 using LethalAPI.LibTerminal.Interfaces;
@@ -27,12 +29,12 @@ namespace RandomMoons.Commands
             ///</summary>
 
             string ConfigString;
-
+         
 
             //We want to create a string that contain all of the current config, and the state of the syncing.
 
-            ConfigString = $"{RMConfig.Instance.AutoStart}, {RMConfig.Instance.AutoExplore}, {RMConfig.Instance.CheckIfVisitedDuringQuota}, "
-                + $"{RMConfig.Instance.RestrictedCommandUsage}, {RMConfig.Instance.MoonSelectionType}";
+            ConfigString = $"{RandomMoons.Config.AutoStart}, {RandomMoons.Config.AutoExplore}, {RandomMoons.Config.CheckIfVisitedDuringQuota}, "
+                + $"{RandomMoons.Config.RestrictedCommandUsage}, {RandomMoons.Config.MoonSelectionType}";
 
 
 

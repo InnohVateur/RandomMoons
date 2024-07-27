@@ -2,10 +2,10 @@
 using BepInEx;
 using BepInEx.Logging;
 using CSync;
+using CSync.Lib;
 using HarmonyLib;
 using LethalAPI.LibTerminal;
 using LethalAPI.LibTerminal.Models;
-using LethalConfig;
 using RandomMoons.Commands;
 using RandomMoons.ConfigUtils;
 using RandomMoons.Patches;
@@ -19,14 +19,13 @@ namespace RandomMoons;
 [BepInPlugin(modGUID, modName, modVersion)]
 [BepInDependency("LethalAPI.Terminal")] // TODO: update version Thunderstore mod id : LethalAPI-LethalAPI_Terminal-1.0.1
 [BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)] // TODO: update version Thunderstore mod id : AinaVT-LethalConfig-1.3.4
-[BepInDependency("com.willis.lc.lethalsettings", BepInDependency.DependencyFlags.SoftDependency)] // TODO: update version Thunderstore mod id : willis81808-LethalSettings-1.4.0
-[BepInDependency("io.github.CSync")]
+[BepInDependency("com.sigurd.csync", "5.0.1")]
 public class RandomMoons : BaseUnityPlugin
 {
     // Basic mod infos
     internal const string modGUID = "InnohVateur.RandomMoons";
     internal const string modName = "RandomMoons";
-    internal const string modVersion = "1.3.0";
+    internal const string modVersion = "1.4.0";
 
     // Harmony instance
     readonly Harmony harmony = new(modGUID);
@@ -34,21 +33,27 @@ public class RandomMoons : BaseUnityPlugin
     // Terminal API Registry Instance
     TerminalModRegistry Commands;
 
-    internal static new ManualLogSource Logger;
-    public static new RMConfig Config { get; private set; }
+    internal static new ManualLogSource Logger = null!;
+    internal static new RMConfig Config { get; private set; } = null!;
 
     // Executed at start
     void Awake()
     {
         Logger = base.Logger;
 
-        Config = new(base.Config);
-        Config.SyncComplete += CheckSynced;
+        Config = new RMConfig(base.Config);
 
-        // Create Terminal and register our commands.
-        Commands = TerminalRegistry.CreateTerminalRegistry();
+        //Attempt to fix the check synced
+        //Config.InitialSyncCompleted += CheckSynced; //doesnt work       
+        //RMConfig RandomMoons.Config.InitialSyncCompleted += (sender, args) => ;
+            //Config.InitialSyncComplete += CheckSynced;
+
+
+            // Create Terminal and register our commands.
+            Commands = TerminalRegistry.CreateTerminalRegistry();
         Commands.RegisterFrom(new ExploreCommand());
-        //Commands.RegisterFrom(new DisplayConfigCommand());
+        Commands.RegisterFrom(new DisplayConfigCommand());
+
 
         try {
             Logger.LogInfo("Applying patches...");
@@ -76,7 +81,10 @@ public class RandomMoons : BaseUnityPlugin
         Logger.LogInfo("Patched StartOfRound");
     }
 
-    void CheckSynced(bool success) {
+    //void CheckSynced(object sender, EventArgs success)
+    void CheckSynced(bool sender, bool success) {
+        
+    /*
         if (!success) {
             Logger.LogWarning("SYNC FAILED");
             States.ConfigStatus = false;
@@ -89,7 +97,9 @@ public class RandomMoons : BaseUnityPlugin
             States.ConfigStatus = true;
             return;
         }
-
-        Logger.LogDebug($"Commands registered! SyncedVar: {RMConfig.Instance.SyncedVar}");
+     */   
+        Logger.LogDebug($"Commands registered! SyncedVar: {RandomMoons.Config.SyncedVar}");
+        Logger.LogDebug("success value: " + success);
     }
+    
 }

@@ -18,9 +18,8 @@ internal class States
     //Config stuff
     public static bool ConfigStatus;
 
-    // TODO: Add new moons added with V50. All vanilla moons scene names 
     public static readonly string[] vanillaMoons = { 
-        "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan" 
+        "Level1Experimentation", "Level2Assurance", "Level3Vow", "Level4March", "Level5Rend", "Level6Dine", "Level7Offense", "Level8Titan", "Level9Artifice", "Level10Adamance", "Level11Embrion"  
     };
 
     public static readonly int companyBuildingLevelID = 3; // Gordion (Company Building) level ID

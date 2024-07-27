@@ -44,7 +44,7 @@ public class ExploreCommand
         if (s.ToLower() == "c" || s.ToLower() == "confirm") // If the player confirms the interaction
         {
             // TODO: redo the way the config works below
-            if (States.hasGambled && RMConfig.Instance.RestrictedCommandUsage.Value) // If the ship already explored
+            if (States.hasGambled && RandomMoons.Config.RestrictedCommandUsage.Value) // If the ship already explored
             {
                 return "You have already explored. Please land before exploring once again !";
             }
@@ -59,8 +59,11 @@ public class ExploreCommand
             StartOfRound.Instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
 
             // If AutoStart enabled, tell StartOfRoundPatch to start a level asap
-            if (RMConfig.Instance.AutoStart.Value)
+            if (RandomMoons.Config.AutoStart.Value)
+            {
                 States.startUponArriving = true;
+                
+            }
 
             States.lastVisitedMoon = moon.PlanetName;
             States.isInteracting = false; // End of interaction
@@ -91,7 +94,7 @@ public class ExploreCommand
 
         // TODO: redo the way the config works
 
-        MoonSelection type = RMConfig.Instance.MoonSelectionType.Value;
+        MoonSelection type = RandomMoons.Config.MoonSelectionType.Value;
 
         // Checks moon selection config entry
         // if the config wants vanilla and random is not then recursiv           if the config wants modded and random is vanilla then recursiv
@@ -101,7 +104,7 @@ public class ExploreCommand
         }
 
         // Checks the register travels config entry
-        if (RMConfig.Instance.CheckIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
+        if (RandomMoons.Config.CheckIfVisitedDuringQuota.Value && States.visitedMoons.Contains(moons[moonIndex].PlanetName))
         {
             return ChooseRandomMoon(moons);
         }

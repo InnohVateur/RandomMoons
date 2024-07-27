@@ -26,7 +26,7 @@ public class TerminalPatch
     [HarmonyPrefix]
     public static void BeginUsingTerminalPatch(Terminal __instance)
     {
-        if (RMConfig.Instance.MoonSelectionType.Value != MoonSelection.MODDED)
+        if (RandomMoons.Config.MoonSelectionType.Value != MoonSelection.MODDED)
             return;
 
         foreach (SelectableLevel lvl in __instance.moonsCatalogueList) {
@@ -34,6 +34,6 @@ public class TerminalPatch
                 return;
         }
 
-        RMConfig.Instance.MoonSelectionType.Value = MoonSelection.ALL;
+        RandomMoons.Config.MoonSelectionType.LocalValue = MoonSelection.ALL;
     }
 }

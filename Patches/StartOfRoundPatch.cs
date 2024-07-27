@@ -46,10 +46,10 @@ internal class StartOfRoundPatch
                 
         //}
 
-        if (__instance.CanChangeLevels() && States.exploreASAP) // Performs auto explore
+        if (__instance.CanChangeLevels() && States.exploreASAP && RandomMoons.Config.AutoExplore.Value == true) // Performs auto explore
         {
             // TODO: redo the way the configs works
-            if (RMConfig.Instance.AutoStart.Value)
+            if (RandomMoons.Config.AutoStart.Value==true)
                 States.startUponArriving = true;
 
             // If there are more than 0 days left, perform the same as explore command, else travel to Gordion (Company Building)
@@ -59,31 +59,43 @@ internal class StartOfRoundPatch
                 __instance.ChangeLevelServerRpc(moon.levelID, terminal.groupCredits);
                 States.lastVisitedMoon = moon.PlanetName;
                 States.hasGambled = true;
+                RandomMoons.Logger.LogDebug("Performing autoexplore to "+moon);
             }
             else {
                 __instance.ChangeLevelServerRpc(States.companyBuildingLevelID, terminal.groupCredits);
+                RandomMoons.Logger.LogDebug("Performing autoexplore to Gordion");
             }
         }
     }
 
     [HarmonyPatch("ArriveAtLevel")]
     [HarmonyPostfix]
-    public static void ArriveAtLevelPatch()
+    public static void ArriveAtLevelPatch(StartOfRound __instance)
     {
-        if (States.confirmedAutostart) return;
+        if (States.confirmedAutostart)
+        {        
+            Thread.Sleep(1000);
+            States.confirmedAutostart = false;
 
-        Thread.Sleep(1000);
-        States.confirmedAutostart = false;
+            GameObject startLever = GameObject.Find("StartGameLever"); // Find ship's level game object
+            if (startLever == null) return;
 
-        GameObject startLever = GameObject.Find("StartGameLever"); // Find ship's level game object
-        if (startLever == null) return;
+            StartMatchLever startMatchLever = startLever.GetComponent<StartMatchLever>(); // Find script component for the game object
+            if (startMatchLever == null) return;
 
-        StartMatchLever startMatchLever = startLever.GetComponent<StartMatchLever>(); // Find script component for the game object
-        if (startMatchLever == null) return;
+            startMatchLever.PullLever(); // Pulls the lever
+            startMatchLever.LeverAnimation(); // Plays the animation
+            startMatchLever.StartGame(); // Starts the level
+        }
+        else if(RandomMoons.Config.AutoStart.Value == true)
+        {
+            RandomMoons.Logger.LogInfo("Autostart check failed with autostart enabled! probably because explore or autoexplore wasnt used to change planet");
+            RandomMoons.Logger.LogDebug("Showing variables");
 
-        startMatchLever.PullLever(); // Pulls the lever
-        startMatchLever.LeverAnimation(); // Plays the animation
-        startMatchLever.StartGame(); // Starts the level
+            RandomMoons.Logger.LogDebug("hasGambled: "+States.hasGambled);
+            RandomMoons.Logger.LogDebug("__instance.currentLevelID: " + States.hasGambled);
+            RandomMoons.Logger.LogDebug("Confirmed autostart: " + States.confirmedAutostart);
+        }
     }
 
     [HarmonyPatch("ChangeLevel")]

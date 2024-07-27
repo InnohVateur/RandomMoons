@@ -1,39 +1,40 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using BepInEx.Configuration;
+using CSync.Extensions;
 using CSync.Lib;
-using CSync.Util;
 using LethalConfig;
 using LethalConfig.ConfigItems;
 using LethalConfig.ConfigItems.Options;
 
 
+
 namespace RandomMoons.ConfigUtils;
 
-[DataContract]
-public class RMConfig : SyncedConfig<RMConfig>
+public class RMConfig : SyncedConfig2<RMConfig>
 {
-    // Should we start the level when traveling to a new moon ? 
-    [DataMember] public SyncedEntry<bool> AutoStart { get; private set; }
+    //{ get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<bool> AutoStart { get; }//
 
     // Should we explore a new moon once the level has ended ? 
-    [DataMember] public SyncedEntry<bool> AutoExplore { get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<bool> AutoExplore { get; }
 
     // Should we be able to visit the same moon twice during a quota ?
-    [DataMember] public SyncedEntry<bool> CheckIfVisitedDuringQuota { get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<bool> CheckIfVisitedDuringQuota { get;  }
 
     // Should the player be able to explore multiples times ?
-    [DataMember] public SyncedEntry<bool> RestrictedCommandUsage { get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<bool> RestrictedCommandUsage { get; }
 
     // What kind of moons can be selected ?
-    [DataMember] public SyncedEntry<MoonSelection> MoonSelectionType { get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<MoonSelection> MoonSelectionType { get; }
 
     // Variable to try and sync
-    [DataMember] public SyncedEntry<int> SyncedVar { get; private set; }
+    [field: SyncedEntryField] public SyncedEntry<int> SyncedVar { get; }
 
     // Bind config entries
     public RMConfig(ConfigFile cfg) : base("InnohVateur.RandomMoons")
     {
-        ConfigManager.Register(this);
+        
 
         AutoStart = cfg.BindSyncedEntry(
             new ConfigDefinition("General","AutoStart"),
@@ -69,37 +70,69 @@ public class RMConfig : SyncedConfig<RMConfig>
             new ConfigDefinition("Debug leftover", "DebuG leftover"),
             4,
             new ConfigDescription("This is a debug variable, you can ignore it")
-        );
+        );         
 
-        var AutoStart_input = new BoolCheckBoxConfigItem(AutoStart.Entry, new BoolCheckBoxOptions
+        if (LethalConfigCompatibility.Enabled)
+        {
+            RandomMoons.Logger.LogInfo("LethalConfig Found");
+            //RandomMoons.Logger.LogInfo("Config check:" + AutoStart.Entry);
+            LethalConfigCompatibility.Patches(AutoStart.Entry, AutoExplore.Entry, CheckIfVisitedDuringQuota.Entry, RestrictedCommandUsage.Entry, MoonSelectionType.Entry);
+        }
+
+        ConfigManager.Register(this);
+    }
+}
+
+public class LethalConfigCompatibility 
+{
+    private static bool? _enabled;
+
+    public static bool Enabled
+    {
+        get
+        {
+            if (_enabled == null)
+            {
+                _enabled = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig");
+            }
+            return (bool)_enabled;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public static void Patches(ConfigEntry<bool> AutoStart, ConfigEntry<bool> AutoExplore, ConfigEntry<bool> CheckIfVisitedDuringQuota, ConfigEntry<bool> RestrictedCommandUsage, ConfigEntry<MoonSelection> MoonSelectionType)
+    {
+        
+        var AutoStart_input = new BoolCheckBoxConfigItem(AutoStart, new BoolCheckBoxOptions
         {
             RequiresRestart = false
         });
 
-        var AutoExplore_input = new BoolCheckBoxConfigItem(AutoExplore.Entry, new BoolCheckBoxOptions
+        var AutoExplore_input = new BoolCheckBoxConfigItem(AutoExplore, new BoolCheckBoxOptions
         {
             RequiresRestart = false
         });
 
-        var CheckIfVisitedDuringQuota_input = new BoolCheckBoxConfigItem(CheckIfVisitedDuringQuota.Entry, new BoolCheckBoxOptions
+        var CheckIfVisitedDuringQuota_input = new BoolCheckBoxConfigItem(CheckIfVisitedDuringQuota, new BoolCheckBoxOptions
         {
             RequiresRestart = false
         });
 
-        var RestrictedCommandUsage_input = new BoolCheckBoxConfigItem(RestrictedCommandUsage.Entry, new BoolCheckBoxOptions
+        var RestrictedCommandUsage_input = new BoolCheckBoxConfigItem(RestrictedCommandUsage, new BoolCheckBoxOptions
         {
             RequiresRestart = false
         });
 
 
-        EnumDropDownConfigItem<MoonSelection> moonSelectionType_input = new EnumDropDownConfigItem<MoonSelection>(MoonSelectionType.Entry, false);
+
+        EnumDropDownConfigItem<MoonSelection> moonSelectionType_input = new EnumDropDownConfigItem<MoonSelection>(MoonSelectionType, false);
 
         LethalConfigManager.AddConfigItem(AutoStart_input);
         LethalConfigManager.AddConfigItem(AutoExplore_input);
         LethalConfigManager.AddConfigItem(CheckIfVisitedDuringQuota_input);
         LethalConfigManager.AddConfigItem(RestrictedCommandUsage_input);
         LethalConfigManager.AddConfigItem(moonSelectionType_input);
-        LethalConfigManager.SkipAutoGenFor(SyncedVar.Entry);
-
+        LethalConfigManager.SkipAutoGen();
+        
     }
-    }
+}
